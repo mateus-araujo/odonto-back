@@ -3,8 +3,10 @@ const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
 const validator = require('validator')
 const sgMail = require('@sendgrid/mail')
+const transporter = require('../../services/nodemailer')
 
 const { User } = require('../models')
+const url = "http://localhost:3000"
 
 require('dotenv').config()
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
@@ -89,17 +91,22 @@ const forgotPassword = async (req, res) => {
     user.passwordResetExpires = now
 
     await user.save()
-
-    const msg = {
-      to: process.env.SENDGRID_TO,
-      from: process.env.SENDGRID_FROM,
-      subject: 'Sending with SendGrid is Fun',
-      text: 'and easy to do anywhere, even with Node.js',
-      html: `<strong>Try to sign in again with this: http://localhost:${process.env.PORT}/${user.email}/${token}</strong>`,
-    }
-    sgMail.send(msg).catch((err) => console.log(err))
-
-    res.send()
+    
+    transporter.sendMail({
+      from: process.env.NM_EMAIL,
+      to: email,
+      subject: 'OdontoNet - Recuperação de senha',
+      template: 'forgot_password',
+      context: { url, email, token }
+    }, (error, info) => {
+      if (error) {
+        console.log(error)
+        return res.status(400).send({ error: 'Cannot send forgot password email' })
+      } else {
+        console.log('Email sent: ' + info.response)
+        res.send()
+      }
+    })
 
   } catch (err) {
     console.log(err)
@@ -112,8 +119,6 @@ const resetPassword = async (req, res) => {
 
   try {
     const user = await User.findOne({ where: { email: email } })
-    console.log('user.passwordResetToken: ' + user.passwordResetToken)
-    console.log('token' + token)
 
     if (!user)
       return res.status(400).send({ error: 'User not found' })
