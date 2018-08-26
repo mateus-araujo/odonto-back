@@ -2,14 +2,13 @@ const bcryptjs = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
 const validator = require('validator')
-const sgMail = require('@sendgrid/mail')
 const transporter = require('../../services/nodemailer')
+const ip = require('ip')
 
 const { User } = require('../models')
-const url = "http://localhost:3000"
+const url = "http://" + ip.address() + ":3000"
 
 require('dotenv').config()
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 const generateToken = (params = {}) => {
   return jwt.sign(params, process.env.JWT_ENCRYPTION, {
