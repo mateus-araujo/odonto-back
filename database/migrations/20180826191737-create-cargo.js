@@ -1,35 +1,50 @@
 'use strict'
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Cargos', {
+  up: (queryInterface, DataTypes) => {
+    queryInterface.createTable('Cargos', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: DataTypes.INTEGER
       },
       nome: {
-        type: Sequelize.STRING
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: "Esse campo não pode ser vazio"
+          }
+        }
       },
       salario: {
-        type: Sequelize.FLOAT
+        type: DataTypes.FLOAT,
+        allowNull: false,
+        validate: {
+          notEmpty: { msg: "Esse campo não pode ser vazio" },
+          isFloat: { msg: "Esse campo precisa ser um valor com vírgula" },
+        }
       },
       descricao: {
-        type: Sequelize.STRING
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: { msg: "Esse campo não pode ser vazio" }
+        }
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW
+        type: DataTypes.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: DataTypes.DATE,
       }
     })
   },
-  down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Cargos')
+  down: (queryInterface, DataTypes) => {
+    queryInterface.dropTable('Cargos')
   }
 }

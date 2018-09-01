@@ -1,50 +1,45 @@
 'use strict'
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: (queryInterface, DataTypes) => {
     queryInterface.createTable('Users', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
-      },
-      name: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
-      userType: {
-        allowNull: false,
-        type: Sequelize.ENUM,
-        values: ['user', 'admin']
+        type: DataTypes.INTEGER,
       },
       email: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         unique: true,
         validate: {
-          isEmail: true,
+          notEmpty: { msg: "Esse campo não pode ser vazio" },
+          isEmail: { msg: "Esse precisa ser um email" }
         }
       },
       password: {
+        type: DataTypes.STRING,
         allowNull: false,
-        type: Sequelize.STRING,
+        validate: {
+          notEmpty: { msg: "Esse campo não pode ser vazio" }
+        }
       },
       passwordResetToken: {
         allowNull: true,
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       passwordResetExpires: {
         allowNull: true,
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
       }
     })
   },

@@ -6,8 +6,14 @@ module.exports = (sequelize, DataTypes) => {
     salario: DataTypes.FLOAT,
     descricao: DataTypes.STRING
   }, {})
+
   Cargo.associate = function(models) {
-    // associations can be defined here
-  };
+    Cargo.belongsToMany(models.Funcionario, {
+      through: 'FuncionariosCargos',
+      as: 'funcionarios',
+      foreignKey: 'cargoId'
+    })
+  }
+  
   return Cargo
-};
+}

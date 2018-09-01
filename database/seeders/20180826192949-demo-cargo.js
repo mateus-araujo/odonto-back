@@ -13,7 +13,7 @@ module.exports = {
         salario: 954.90,
         descricao: 'Descrição de dentista'
       },
-    ], {});
+    ], {})
   },
 
   down: (queryInterface, Sequelize) => {
