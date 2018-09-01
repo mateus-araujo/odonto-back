@@ -22,6 +22,7 @@ router.post('/funcionarios', FuncionarioController.create)
 router.get('/funcionarios', FuncionarioController.index)
 router.get('/funcionarios/:funcionario_id', FuncionarioController.show)
 router.put('/funcionarios/:funcionario_id', FuncionarioController.update)
+router.delete('/funcionarios/:funcionario_id', FuncionarioController.destroy)
 
 router.get('/users', UserController.index)
 router.get('/users/:user_id', UserController.show)

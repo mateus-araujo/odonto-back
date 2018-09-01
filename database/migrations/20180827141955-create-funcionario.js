@@ -45,6 +45,7 @@ module.exports = {
         type: DataTypes.INTEGER,
         references: { model: 'Users', key: 'id' },
         allowNull: false,
+        onUpdate: "CASCADE",
         onDelete: "CASCADE"
       },
       createdAt: {

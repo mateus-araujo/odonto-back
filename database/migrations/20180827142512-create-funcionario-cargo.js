@@ -11,12 +11,16 @@ module.exports = {
       funcionarioId: {
         type: DataTypes.INTEGER,
         references: { model: 'Funcionarios', key: 'id' },
-        allowNull: false
+        allowNull: false,
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE"
       },
       cargoId: {
         type: DataTypes.INTEGER,
         references: { model: 'Cargos', key: 'id' },
-        allowNull: false
+        allowNull: false,
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE"
       },
       createdAt: {
         allowNull: false,
