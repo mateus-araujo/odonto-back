@@ -34,12 +34,17 @@ module.exports = {
         }
       },
       data_nascimento: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
         validate: {
           notEmpty: { msg: "Esse campo não pode ser vazio" },
           isDate: { msg: "Esse campo precisa ser uma data válida" }
         }
+      },
+      acesso_sistema: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
       },
       usuarioId: {
         type: DataTypes.INTEGER,

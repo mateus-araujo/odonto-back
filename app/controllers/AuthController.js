@@ -24,10 +24,6 @@ const create = async (req, res) => {
     if (await User.findOne({ where: { email: email } }))
       return res.status(400).send({ error: 'User already exists' })
 
-    if (userType != 'user' && userType != 'admin') {
-      return res.status(400).send({ error: 'Invalid userType' })
-    }
-
     if (!validator.isEmail(email)) {
       return res.status(400).send({ error: 'Invalid email' })
     }

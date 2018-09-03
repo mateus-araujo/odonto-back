@@ -1,12 +1,23 @@
+const validator = require('validator')
+const moment = require('moment')
 const { Funcionario, User, Cargo } = require('../models')
 
 const create = async (req, res) => {
   try {
-    const { email, password, cargos, ...data } = req.body
+    let { email, password, cargos, data_nascimento, ...data } = req.body
+
+    if (await User.findOne({ where: { email: email } }))
+      return res.status(400).send({ error: 'Usuário já existe' })
+
+    if (!validator.isEmail(email)) {
+      return res.status(400).send({ error: 'Email inválido' })
+    }
 
     const user = await User.create({ email, password })
 
-    const funcionario = await Funcionario.create({ usuarioId: user.id, ...data })
+    data_nascimento = moment(data_nascimento, 'DD/MM/YYYY').format('MM/DD/YYYY')
+
+    const funcionario = await Funcionario.create({ usuarioId: user.id, data_nascimento, ...data })
 
     if (cargos && cargos.length > 0)
       funcionario.setCargos(cargos)
@@ -62,13 +73,15 @@ const show = async (req, res) => {
 
 const update = async (req, res) => {
   const { funcionario_id } = req.params
-  const { email, password, cargos, ...data } = req.body
+  let { email, password, cargos, data_nascimento, ...data } = req.body
 
   try {
     const funcionario = await Funcionario.findById(funcionario_id)
     const user = await User.findById(funcionario.usuarioId)
 
-    funcionario.set(data)
+    data_nascimento = moment(data_nascimento, 'DD/MM/YYYY').format('MM/DD/YYYY')
+
+    funcionario.set({data_nascimento, data})
     await funcionario.save()
 
     if (email || password) {
