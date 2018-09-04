@@ -9,6 +9,13 @@ module.exports = {
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: { msg: "Esse campo não pode ser vazio" }
+        }
+      },
       email: {
         allowNull: false,
         type: DataTypes.STRING,

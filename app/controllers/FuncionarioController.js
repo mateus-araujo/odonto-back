@@ -4,7 +4,7 @@ const { Funcionario, User, Cargo } = require('../models')
 
 const create = async (req, res) => {
   try {
-    let { email, password, cargos, data_nascimento, ...data } = req.body
+    let { name, email, password, cargos, data_nascimento, ...data } = req.body
 
     if (await User.findOne({ where: { email: email } }))
       return res.status(400).send({ error: 'Usuário já existe' })
@@ -13,7 +13,7 @@ const create = async (req, res) => {
       return res.status(400).send({ error: 'Email inválido' })
     }
 
-    const user = await User.create({ email, password })
+    const user = await User.create({ name, email, password })
 
     data_nascimento = moment(data_nascimento, 'DD/MM/YYYY').format('MM/DD/YYYY')
 
@@ -73,7 +73,7 @@ const show = async (req, res) => {
 
 const update = async (req, res) => {
   const { funcionario_id } = req.params
-  let { email, password, cargos, data_nascimento, ...data } = req.body
+  let { name, email, password, cargos, data_nascimento, ...data } = req.body
 
   try {
     const funcionario = await Funcionario.findById(funcionario_id)
@@ -84,8 +84,8 @@ const update = async (req, res) => {
     funcionario.set({data_nascimento, data})
     await funcionario.save()
 
-    if (email || password) {
-      user.set({ email, password })
+    if (name || email || password) {
+      user.set({ name, email, password })
       await user.save()
     }
 
@@ -104,8 +104,10 @@ const destroy = async (req, res) => {
 
   try {
     funcionario = await Funcionario.findById(funcionario_id)
+    user = await User.findById(funcionario.usuarioId)
 
     await funcionario.destroy()
+    await user.destroy()
 
     return res.status(204).send()
   } catch (err) {

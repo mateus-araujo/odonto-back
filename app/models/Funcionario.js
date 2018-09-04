@@ -4,7 +4,6 @@ const moment = require('moment')
 
 module.exports = (sequelize, DataTypes) => {
   const Funcionario = sequelize.define('Funcionario', {
-    nome: DataTypes.STRING,
     clinica: DataTypes.STRING,
     cpf: DataTypes.INTEGER,
     data_nascimento: {

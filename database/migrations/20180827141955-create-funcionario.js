@@ -8,13 +8,6 @@ module.exports = {
         primaryKey: true,
         type: DataTypes.INTEGER
       },
-      nome: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          notEmpty: { msg: "Esse campo não pode ser vazio" }
-        }
-      },
       clinica: {
         type: DataTypes.STRING,
         allowNull: false,
