@@ -8,6 +8,17 @@ module.exports = (sequelize, DataTypes) => {
     passwordResetToken: DataTypes.STRING,
     passwordResetExpires: DataTypes.DATE,
   })
+
+  User.associate = function(models) {
+    User.hasMany(models.Grupo, { foreignKey: 'fundadorId' })
+    User.hasOne(models.Funcionario, { as: 'funcionario', foreignKey: 'usuarioId' })
+    
+    User.belongsToMany(models.Grupo, {
+      through: 'GruposIntegrantes',
+      as: 'grupos',
+      foreignKey: 'integranteId'
+    })
+  }
   
   User.beforeSave(async (user) => {
     try {

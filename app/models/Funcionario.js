@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'funcionarioId'
     })
 
-    Funcionario.hasOne(models.User, { foreignKey: 'id' })
+    Funcionario.belongsTo(models.User, { as: 'usuario', foreignKey: 'usuarioId' })
   }
 
   return Funcionario;

@@ -13,6 +13,16 @@ module.exports = {
         salario: 954.90,
         descricao: 'Descrição de dentista'
       },
+      {
+        nome: 'Administrador',
+        salario: 954.90,
+        descricao: 'Descrição de administrador'
+      },
+      {
+        nome: 'Serviços gerais',
+        salario: 954.90,
+        descricao: 'Descrição de serviços gerais'
+      },
     ], {})
   },
 

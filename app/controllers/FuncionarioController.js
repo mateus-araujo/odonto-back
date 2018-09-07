@@ -1,3 +1,5 @@
+const Sequelize = require('sequelize')
+const Op = Sequelize.Op
 const validator = require('validator')
 const moment = require('moment')
 const { Funcionario, User, Cargo } = require('../models')
@@ -38,9 +40,81 @@ const index = async (req, res) => {
           as: 'cargos',
           through: { atributes: [] },
         },
-        User
+        {
+          model: User,
+          as: 'usuario'
+        }
       ]
     })
+
+    return res.status(200).send({ funcionarios })
+  } catch (err) {
+    console.log(err)
+    return res.status(400).send({ error: err })
+  }
+}
+
+const search = async (req, res) => {
+  const { toSearch } = req.params
+  let funcionarios
+
+  try {
+    const funcionariosClinica = await Funcionario.findAll({ 
+      where: { clinica: { [Op.like]: `%${toSearch}%` } },
+      include: [
+        {
+          model: Cargo,
+          as: 'cargos',
+          through: { atributes: [] },
+        },
+        {
+          model: User,
+          as: 'usuario',
+        }
+      ]
+    })
+
+    const funcionariosCargo = await Funcionario.findAll({
+      include: [
+        {
+          model: Cargo,
+          as: 'cargos',
+          where: { nome: { [Op.like]: `%${toSearch}%` } },
+          through: { atributes: [] },
+        },
+        {
+          model: User,
+          as: 'usuario',
+        }
+      ]
+    })
+
+    const funcionariosUser = await Funcionario.findAll({
+      include: [
+        {
+          model: Cargo,
+          as: 'cargos',
+          through: { atributes: [] },
+        },
+        {
+          model: User,
+          as: 'usuario',
+          where: {
+            [Op.or]: [
+              { name: { [Op.like]: `%${toSearch}%` } },
+              { email: { [Op.like]: `%${toSearch}%` } },
+            ]
+          }
+        }
+      ]
+    })
+
+    if (funcionariosClinica.length > 0)
+      funcionarios = funcionariosClinica
+    if (funcionariosCargo.length > 0)
+      funcionarios = funcionariosCargo
+    if (funcionariosUser.length > 0)
+      funcionarios = funcionariosUser
 
     return res.status(200).send({ funcionarios })
   } catch (err) {
@@ -60,7 +134,10 @@ const show = async (req, res) => {
           as: 'cargos',
           through: { atributes: [] },
         },
-        User
+        {
+          model: User,
+          as: 'usuario'
+        }
       ]
     })
 
@@ -81,7 +158,7 @@ const update = async (req, res) => {
 
     data_nascimento = moment(data_nascimento, 'DD/MM/YYYY').format('MM/DD/YYYY')
 
-    funcionario.set({data_nascimento, data})
+    funcionario.set({ data_nascimento, data })
     await funcionario.save()
 
     if (name || email || password) {
@@ -119,6 +196,7 @@ const destroy = async (req, res) => {
 module.exports = {
   create,
   index,
+  search,
   show,
   update,
   destroy,
