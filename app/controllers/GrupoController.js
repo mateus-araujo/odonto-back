@@ -2,12 +2,12 @@ const { Grupo, User, Funcionario } = require('../models')
 
 const create = async (req, res) => {
   try {
-    const { titulo, fundadorId, integrantes } = req.body
+    const { integrantes, ...data } = req.body
 
     if (await Grupo.findOne({ where: { titulo: titulo } }))
       return res.status(400).send({ error: 'Um grupo com esse nome já existe' })
 
-    const grupo = await Grupo.create({ titulo, fundadorId })
+    const grupo = await Grupo.create({ ...data })
     const user = await User.findById(fundadorId)
 
     if (integrantes && integrantes.length > 0)
@@ -54,10 +54,16 @@ const show = async (req, res) => {
       include: [
         {
           model: User,
-          as: 'integrantes',
-          through: { atributes: [] },
+          as: 'fundador'
         },
-        User
+        {
+          model: User,
+          as: 'integrantes',
+          include: [{
+            model: Funcionario,
+            as: 'funcionario'
+          }]
+        }
       ]
     })
 
@@ -75,13 +81,13 @@ const update = async (req, res) => {
   try {
     const grupo = await Grupo.findById(grupo_id)
 
-    funcionario.set(data)
-    await funcionario.save()
+    grupo.set({ ...data })
+    await grupo.save()
 
     if (integrantes && integrantes.length > 0)
       grupo.setIntegrantes(integrantes)
 
-    return res.send({ grupo, user })
+    return res.send({ grupo })
   } catch (err) {
     console.log(err)
     return res.status(400).send({ error: err })

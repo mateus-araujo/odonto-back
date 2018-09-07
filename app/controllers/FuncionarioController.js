@@ -158,7 +158,7 @@ const update = async (req, res) => {
 
     data_nascimento = moment(data_nascimento, 'DD/MM/YYYY').format('MM/DD/YYYY')
 
-    funcionario.set({ data_nascimento, data })
+    funcionario.set({ data_nascimento, ...data })
     await funcionario.save()
 
     if (name || email || password) {
