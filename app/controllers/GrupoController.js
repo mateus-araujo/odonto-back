@@ -2,13 +2,15 @@ const { Grupo, User, Funcionario } = require('../models')
 
 const create = async (req, res) => {
   try {
-    const { integrantes, ...data } = req.body
+    const { titulo, fundadorId, integrantes } = req.body
 
     if (await Grupo.findOne({ where: { titulo: titulo } }))
       return res.status(400).send({ error: 'Um grupo com esse nome já existe' })
 
-    const grupo = await Grupo.create({ ...data })
+    const grupo = await Grupo.create({ titulo, fundadorId })
     const user = await User.findById(fundadorId)
+
+    integrantes.push(fundadorId)
 
     if (integrantes && integrantes.length > 0)
       grupo.setIntegrantes(integrantes)
