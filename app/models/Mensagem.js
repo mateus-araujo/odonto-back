@@ -5,7 +5,9 @@ module.exports = (sequelize, DataTypes) => {
     assunto: DataTypes.STRING,
     remetenteId: DataTypes.INTEGER,
     texto: DataTypes.STRING
-  }, {})
+  }, {
+    tableName: 'Mensagens',
+  })
 
   Mensagem.associate = function(models) {
     Mensagem.belongsToMany(models.User, {
@@ -14,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'mensagemId'
     })
 
+    Mensagem.belongsTo(models.User, { as: 'remetente', foreignKey: 'remetenteId' })
     Mensagem.hasOne(models.MensagemAnexo, { as: 'anexo', foreignKey: 'mensagemId' })
     Mensagem.hasOne(models.MensagemStatus, { as: 'status', foreignKey: 'mensagemId' })
   }

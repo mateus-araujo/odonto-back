@@ -6,7 +6,9 @@ module.exports = (sequelize, DataTypes) => {
     tipo: DataTypes.STRING,
     anexo: DataTypes.BLOB,
     mensagemId: DataTypes.INTEGER,
-  }, {})
+  }, {
+    tableName: 'MensagensAnexos',
+  })
 
   MensagemAnexo.associate = function(models) {
     MensagemAnexo.belongsTo(models.Mensagem, { as: 'mensagem', foreignKey: 'mensagemId' })

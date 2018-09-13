@@ -7,6 +7,7 @@ const UserController = require('../app/controllers/UserController')
 const CargoController = require('../app/controllers/CargoController')
 const FuncionarioController = require('../app/controllers/FuncionarioController')
 const GrupoController = require('../app/controllers/GrupoController')
+const MensagemController = require('../app/controllers/MensagemController')
 
 router.post('/auth/register', AuthController.create)
 router.post('/auth/login', AuthController.login)
@@ -31,6 +32,10 @@ router.get('/grupos', GrupoController.index)
 router.get('/grupos/:grupo_id', GrupoController.show)
 router.put('/grupos/:grupo_id', GrupoController.update)
 router.delete('/grupos/:grupo_id', GrupoController.destroy)
+
+router.post('/mensagens', MensagemController.create)
+router.get('/mensagens', MensagemController.index)
+router.delete('/mensagens/:mensagem_id', MensagemController.destroy)
 
 router.get('/users', UserController.index)
 router.get('/users/:user_id', UserController.show)

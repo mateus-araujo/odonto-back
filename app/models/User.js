@@ -19,6 +19,12 @@ module.exports = (sequelize, DataTypes) => {
       as: 'grupos',
       foreignKey: 'integranteId'
     })
+
+    User.belongsToMany(models.Mensagem, {
+      through: 'MensagensDestinatarios',
+      as: 'mensagens',
+      foreignKey: 'destinatarioId'
+    })
   }
   
   User.beforeSave(async (user) => {

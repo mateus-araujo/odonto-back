@@ -4,7 +4,9 @@ module.exports = (sequelize, DataTypes) => {
   const MensagemDestinatario = sequelize.define('MensagemDestinatario', {
     mensagemId: DataTypes.INTEGER,
     destinatarioId: DataTypes.INTEGER
-  }, {})
+  }, {
+    tableName: 'MensagensDestinatarios',
+  })
 
   MensagemDestinatario.associate = function(models) {
     MensagemDestinatario.belongsTo(models.Mensagem, { foreignKey: 'mensagemId' })
