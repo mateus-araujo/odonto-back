@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-const auth = require('../middlewares/auth')
+// const auth = require('../middlewares/auth')
 const AuthController = require('../app/controllers/AuthController')
 const UserController = require('../app/controllers/UserController')
 const CargoController = require('../app/controllers/CargoController')
@@ -35,6 +35,13 @@ router.delete('/grupos/:grupo_id', GrupoController.destroy)
 
 router.post('/mensagens', MensagemController.create)
 router.get('/mensagens', MensagemController.index)
+router.get('/mensagens/:mensagem_id', MensagemController.show)
+router.get('/mensagens/entrada/:user_id', MensagemController.showMessagesInbox)
+router.get('/mensagens/enviadas/:user_id', MensagemController.showMessagesSent)
+router.get('/mensagens/arquivadas/:user_id', MensagemController.showMessagesArchived)
+router.put('/mensagens/vizualizar/:mensagem_id', MensagemController.viewMessage)
+router.put('/mensagens/arquivar/:mensagem_id', MensagemController.archiveMessage)
+router.put('/mensagens/restaurar/:mensagem_id', MensagemController.restoreMessage)
 router.delete('/mensagens/:mensagem_id', MensagemController.destroy)
 
 router.get('/users', UserController.index)

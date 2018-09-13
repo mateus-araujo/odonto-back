@@ -1,5 +1,5 @@
-const { 
-  Mensagem, 
+const {
+  Mensagem,
   // MensagemAnexo,
   MensagemStatus,
   User
@@ -53,6 +53,174 @@ const index = async (req, res) => {
   }
 }
 
+const show = async (req, res) => {
+  const { mensagem_id } = req.params
+
+  try {
+    const mensagens = await Mensagem.findById(mensagem_id, {
+      include: [
+        {
+          model: User,
+          as: 'remetente'
+        },
+        {
+          model: MensagemStatus,
+          as: 'status'
+        },
+        {
+          model: User,
+          as: 'destinatarios',
+          through: { atributes: [] },
+        }
+      ]
+    })
+
+    return res.status(200).send({ mensagens })
+  } catch (err) {
+    console.log(err)
+    return res.status(400).send({ error: err })
+  }
+}
+
+const showMessagesInbox = async (req, res) => {
+  const { user_id } = req.params
+
+  try {
+    const mensagens = await Mensagem.findAll({
+      include: [
+        {
+          model: User,
+          as: 'remetente'
+        },
+        {
+          model: MensagemStatus,
+          as: 'status'
+        },
+        {
+          model: User,
+          as: 'destinatarios',
+          through: { atributes: [] },
+          where: { id: user_id }
+        }
+      ]
+    })
+
+    return res.status(200).send({ mensagens })
+  } catch (err) {
+    console.log(err)
+    return res.status(400).send({ error: err })
+  }
+}
+
+const showMessagesSent = async (req, res) => {
+  const { user_id } = req.params
+
+  try {
+    const mensagens = await Mensagem.findAll({
+      include: [
+        {
+          model: User,
+          as: 'remetente',
+          where: { id: user_id }
+        },
+        {
+          model: MensagemStatus,
+          as: 'status'
+        },
+        {
+          model: User,
+          as: 'destinatarios',
+          through: { atributes: [] },
+        }
+      ]
+    })
+
+    return res.status(200).send({ mensagens })
+  } catch (err) {
+    console.log(err)
+    return res.status(400).send({ error: err })
+  }
+}
+
+const showMessagesArchived = async (req, res) => {
+  const { user_id } = req.params
+
+  try {
+    const mensagens = await Mensagem.findAll({
+      include: [
+        {
+          model: User,
+          as: 'remetente'
+        },
+        {
+          model: MensagemStatus,
+          as: 'status',
+          where: { arquivada: true }
+        },
+        {
+          model: User,
+          as: 'destinatarios',
+          through: { atributes: [] },
+          where: { id: user_id }
+        }
+      ]
+    })
+
+    return res.status(200).send({ mensagens })
+  } catch (err) {
+    console.log(err)
+    return res.status(400).send({ error: err })
+  }
+}
+
+const viewMessage = async (req, res) => {
+  const { mensagem_id } = req.params
+
+  try {
+    const status = await MensagemStatus.findOne({ where: { mensagemId: mensagem_id } })
+
+    status.set({ vizualizada: true })
+    await status.save()
+
+    return res.send({ status })
+  } catch (err) {
+    console.log(err)
+    return res.status(400).send({ error: err })
+  }
+}
+
+const archiveMessage = async (req, res) => {
+  const { mensagem_id } = req.params
+
+  try {
+    const status = await MensagemStatus.findOne({ where: { mensagemId: mensagem_id } })
+
+    status.set({ arquivada: true })
+    await status.save()
+
+    return res.send({ status })
+  } catch (err) {
+    console.log(err)
+    return res.status(400).send({ error: err })
+  }
+}
+
+const restoreMessage = async (req, res) => {
+  const { mensagem_id } = req.params
+
+  try {
+    const status = await MensagemStatus.findOne({ where: { mensagemId: mensagem_id } })
+
+    status.set({ arquivada: false })
+    await status.save()
+
+    return res.send({ status })
+  } catch (err) {
+    console.log(err)
+    return res.status(400).send({ error: err })
+  }
+}
+
 const destroy = async (req, res) => {
   const { mensagem_id } = req.params
 
@@ -71,5 +239,12 @@ const destroy = async (req, res) => {
 module.exports = {
   create,
   index,
+  show,
+  showMessagesInbox,
+  showMessagesSent,
+  showMessagesArchived,
+  viewMessage,
+  archiveMessage,
+  restoreMessage,
   destroy
 }
