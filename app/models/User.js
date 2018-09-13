@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
 
   User.associate = function(models) {
     User.hasMany(models.Grupo, { foreignKey: 'fundadorId' })
+    // User.hasMany(models.Mensagem, { foreignKey: 'remetenteId' })
     User.hasOne(models.Funcionario, { as: 'funcionario', foreignKey: 'usuarioId' })
     
     User.belongsToMany(models.Grupo, {

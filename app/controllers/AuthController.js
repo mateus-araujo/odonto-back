@@ -18,7 +18,6 @@ const generateToken = (params = {}) => {
 
 const create = async (req, res) => {
   const { email } = req.body
-  const { userType } = req.body
 
   try {
     if (await User.findOne({ where: { email: email } }))

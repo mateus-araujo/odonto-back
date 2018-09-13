@@ -3,10 +3,10 @@
 module.exports = (sequelize, DataTypes) => {
   const Mensagem = sequelize.define('Mensagem', {
     assunto: DataTypes.STRING,
-    remetente: DataTypes.INTEGER,
+    remetenteId: DataTypes.INTEGER,
     texto: DataTypes.STRING,
-    status: DataTypes.INTEGER,
-    anexo: DataTypes.INTEGER
+    statusId: DataTypes.INTEGER,
+    anexoId: DataTypes.INTEGER
   }, {})
 
   Mensagem.associate = function(models) {

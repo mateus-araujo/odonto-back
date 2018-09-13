@@ -9,6 +9,5 @@ module.exports = (sequelize, DataTypes) => {
   MensagemDestinatario.associate = function(models) {
     // associations can be defined here
   }
-
   return MensagemDestinatario
 }

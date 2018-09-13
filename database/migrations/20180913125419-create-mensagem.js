@@ -2,18 +2,23 @@
 
 module.exports = {
   up: (queryInterface, DataTypes) => {
-    return queryInterface.createTable('MensagensDestinatarios', {
+    return queryInterface.createTable('Mensagens', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER
       },
-      mensagemId: {
-        type: DataTypes.INTEGER
+      assunto: {
+        type: DataTypes.STRING
       },
-      destinatarioId: {
-        type: DataTypes.INTEGER
+      remetenteId: {
+        type: DataTypes.INTEGER,
+        references: { model: 'Users', key: 'id' },
+        allowNull: false
+      },
+      texto: {
+        type: DataTypes.STRING
       },
       createdAt: {
         allowNull: false,
@@ -26,6 +31,6 @@ module.exports = {
     });
   },
   down: (queryInterface, DataTypes) => {
-    return queryInterface.dropTable('MensagensDestinatarios')
+    return queryInterface.dropTable('Mensagens')
   }
 }

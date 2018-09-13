@@ -2,9 +2,9 @@
 
 module.exports = (sequelize, DataTypes) => {
   const MensagemAnexo = sequelize.define('MensagemAnexo', {
-    anexo: DataTypes.BLOB,
+    nome: DataTypes.STRING,
     tipo: DataTypes.STRING,
-    mensagemId: DataTypes.INTEGER
+    anexo: DataTypes.BLOB
   }, {})
 
   MensagemAnexo.associate = function(models) {

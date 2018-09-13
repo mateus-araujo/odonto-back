@@ -2,27 +2,25 @@
 
 module.exports = {
   up: (queryInterface, DataTypes) => {
-    return queryInterface.createTable('Mensagens', {
+    return queryInterface.createTable('MensagensStatus', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER
       },
-      assunto: {
-        type: DataTypes.STRING
+      vizualizada: {
+        type: DataTypes.BOOLEAN
       },
-      remetente: {
-        type: DataTypes.INTEGER
+      arquivada: {
+        type: DataTypes.BOOLEAN
       },
-      texto: {
-        type: DataTypes.STRING
-      },
-      status: {
-        type: DataTypes.INTEGER
-      },
-      anexo: {
-        type: DataTypes.INTEGER
+      mensagemId: {
+        type: DataTypes.INTEGER,
+        references: { model: 'Mensagens', key: 'id' },
+        allowNull: false,
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE"
       },
       createdAt: {
         allowNull: false,
@@ -35,6 +33,6 @@ module.exports = {
     })
   },
   down: (queryInterface, DataTypes) => {
-    return queryInterface.dropTable('Mensagens')
+    return queryInterface.dropTable('MensagensStatus')
   }
 }
