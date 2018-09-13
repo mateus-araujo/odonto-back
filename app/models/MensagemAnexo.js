@@ -4,11 +4,12 @@ module.exports = (sequelize, DataTypes) => {
   const MensagemAnexo = sequelize.define('MensagemAnexo', {
     nome: DataTypes.STRING,
     tipo: DataTypes.STRING,
-    anexo: DataTypes.BLOB
+    anexo: DataTypes.BLOB,
+    mensagemId: DataTypes.INTEGER,
   }, {})
 
   MensagemAnexo.associate = function(models) {
-    // associations can be defined here
+    MensagemAnexo.belongsTo(models.Mensagem, { as: 'mensagem', foreignKey: 'mensagemId' })
   }
 
   return MensagemAnexo
