@@ -4,9 +4,11 @@ module.exports = (sequelize, DataTypes) => {
     grupoId: DataTypes.INTEGER,
     integranteId: DataTypes.INTEGER
   }, {})
+
   GrupoIntegrante.associate = function(models) {
     GrupoIntegrante.belongsTo(models.Grupo, { foreignKey: 'grupoId' })
     GrupoIntegrante.belongsTo(models.User, { foreignKey: 'integranteId' })
   }
-  return GrupoIntegrante;
-};
+
+  return GrupoIntegrante
+}

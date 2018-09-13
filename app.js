@@ -50,7 +50,7 @@ createDefaultUser = async () => {
     const funcionario = await Funcionario.create({
       clinica: 'Nome da clínica',
       cpf: '021.170-943-33',
-      data_nascimento: '09/10/1993',
+      data_nascimento: '10/09/1993',
       acesso_sistema: true,
       usuarioId: user.id
     })

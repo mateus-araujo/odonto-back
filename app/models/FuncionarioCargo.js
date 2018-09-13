@@ -10,5 +10,6 @@ module.exports = (sequelize, DataTypes) => {
     FuncionarioCargo.belongsTo(models.Funcionario, { foreignKey: 'funcionarioId' })
     FuncionarioCargo.belongsTo(models.Cargo, { foreignKey: 'cargoId' })
   }
+  
   return FuncionarioCargo
 }
