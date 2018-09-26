@@ -9,15 +9,25 @@ module.exports = {
         primaryKey: true,
         type: DataTypes.INTEGER
       },
-      vizualizada: {
+      visualizada: {
         type: DataTypes.BOOLEAN
       },
       arquivada: {
         type: DataTypes.BOOLEAN
       },
+      apagada: {
+        type: DataTypes.BOOLEAN
+      },
       mensagemId: {
         type: DataTypes.INTEGER,
         references: { model: 'Mensagens', key: 'id' },
+        allowNull: false,
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE"
+      },
+      usuarioId: {
+        type: DataTypes.INTEGER,
+        references: { model: 'Users', key: 'id' },
         allowNull: false,
         onUpdate: "CASCADE",
         onDelete: "CASCADE"

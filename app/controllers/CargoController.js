@@ -1,13 +1,13 @@
 const { Cargo } = require('../models')
 
 const create = async (req, res) => {
-  const { nome } = req.body
+  const { nome, descricao, salario, permissao } = req.body
 
   try {
     if (await Cargo.findOne({ where: { nome: nome } }))
       return res.status(400).send({ error: 'Cargo já existe' })
 
-    const cargo = await Cargo.create(req.body)
+    const cargo = await Cargo.create({ nome, descricao, salario, permissao })
 
     return res.status(200).send({ cargo })
   } catch (err) {

@@ -1,7 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
-var ip = require('ip')
+const ip = require('ip')
 
 const { Cargo, Funcionario, User } = require('./app/models')
 
@@ -44,7 +44,8 @@ createDefaultUser = async () => {
     const cargo = await Cargo.create({
       nome: 'Administrador',
       salario: '1000',
-      descricao: 'Descrição de administrador'
+      descricao: 'Descrição de administrador',
+      permissao: 'Administrador'
     })
 
     const funcionario = await Funcionario.create({
@@ -57,7 +58,6 @@ createDefaultUser = async () => {
 
     const cargos = cargo.id
     funcionario.setCargos(cargos)
-    
   }
 }
 

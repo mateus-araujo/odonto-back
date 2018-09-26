@@ -34,6 +34,14 @@ module.exports = {
           notEmpty: { msg: "Esse campo não pode ser vazio" }
         }
       },
+      permissao: {
+        type: DataTypes.ENUM(
+          'Administrador', 
+          'RH',
+          'Gerente',
+          'Padrão'
+          )
+      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,

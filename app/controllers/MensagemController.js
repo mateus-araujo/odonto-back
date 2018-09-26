@@ -14,12 +14,29 @@ const create = async (req, res) => {
     /* if (anexoId)
       const mensagemAnexo = await MensagemAnexo({ nome, tipo, anexo, mensagemId: mensagem.id }) */
 
-    if (destinatarios && destinatarios.length > 0)
+    await MensagemStatus.create({
+      visualizada: false,
+      arquivada: false,
+      apagada: false,
+      mensagemId: mensagem.id,
+      usuarioId: remetenteId
+    })
+
+    if (destinatarios && destinatarios.length > 0) {
       mensagem.setDestinatarios(destinatarios)
 
-    const mensagemStatus = await MensagemStatus.create({ vizualizada: false, arquivada: false, mensagemId: mensagem.id })
+      destinatarios.map(usuarioId =>
+        MensagemStatus.create({
+          visualizada: false,
+          arquivada: false,
+          apagada: false,
+          mensagemId: mensagem.id,
+          usuarioId
+        })
+      )
+    }
 
-    return res.status(200).send({ mensagem, mensagemStatus })
+    return res.status(200).send({ mensagem })
   } catch (err) {
     console.log(err)
     return res.status(400).send({ error: err })
@@ -94,7 +111,12 @@ const showMessagesInbox = async (req, res) => {
         },
         {
           model: MensagemStatus,
-          as: 'status'
+          as: 'status',
+          where: { 
+            arquivada: false,
+            apagada: false,
+            usuarioId: user_id
+          }
         },
         {
           model: User,
@@ -125,7 +147,11 @@ const showMessagesSent = async (req, res) => {
         },
         {
           model: MensagemStatus,
-          as: 'status'
+          as: 'status',
+          where: { 
+            arquivada: false,
+            apagada: false
+          }
         },
         {
           model: User,
@@ -155,7 +181,11 @@ const showMessagesArchived = async (req, res) => {
         {
           model: MensagemStatus,
           as: 'status',
-          where: { arquivada: true }
+          where: { 
+            arquivada: true,
+            apagada: false,
+            usuarioId: user_id
+          }
         },
         {
           model: User,
@@ -174,12 +204,17 @@ const showMessagesArchived = async (req, res) => {
 }
 
 const viewMessage = async (req, res) => {
-  const { mensagem_id } = req.params
+  const { mensagem_id, user_id } = req.params
 
   try {
-    const status = await MensagemStatus.findOne({ where: { mensagemId: mensagem_id } })
+    const status = await MensagemStatus.findOne({ 
+      where: { 
+        mensagemId: mensagem_id, 
+        usuarioId: user_id
+      }
+    })
 
-    status.set({ vizualizada: true })
+    status.set({ visualizada: true })
     await status.save()
 
     return res.send({ status })
@@ -190,10 +225,15 @@ const viewMessage = async (req, res) => {
 }
 
 const archiveMessage = async (req, res) => {
-  const { mensagem_id } = req.params
+  const { mensagem_id, user_id } = req.params
 
   try {
-    const status = await MensagemStatus.findOne({ where: { mensagemId: mensagem_id } })
+    const status = await MensagemStatus.findOne({ 
+      where: { 
+        mensagemId: mensagem_id, 
+        usuarioId: user_id
+      }
+    })
 
     status.set({ arquivada: true })
     await status.save()
@@ -206,10 +246,15 @@ const archiveMessage = async (req, res) => {
 }
 
 const restoreMessage = async (req, res) => {
-  const { mensagem_id } = req.params
+  const { mensagem_id, user_id } = req.params
 
   try {
-    const status = await MensagemStatus.findOne({ where: { mensagemId: mensagem_id } })
+    const status = await MensagemStatus.findOne({ 
+      where: { 
+        mensagemId: mensagem_id, 
+        usuarioId: user_id
+      }
+    })
 
     status.set({ arquivada: false })
     await status.save()
@@ -221,15 +266,21 @@ const restoreMessage = async (req, res) => {
   }
 }
 
-const destroy = async (req, res) => {
-  const { mensagem_id } = req.params
+const deleteMessage = async (req, res) => {
+  const { mensagem_id, user_id } = req.params
 
   try {
-    mensagem = await Mensagem.findById(mensagem_id)
+    const status = await MensagemStatus.findOne({ 
+      where: { 
+        mensagemId: mensagem_id, 
+        usuarioId: user_id
+      }
+    })
 
-    await mensagem.destroy()
+    status.set({ apagada: true })
+    await status.save()
 
-    return res.status(204).send()
+    return res.send({ status })
   } catch (err) {
     console.log(err)
     return res.status(400).send({ error: 'Erro ao deletar mensgem' })
@@ -246,5 +297,5 @@ module.exports = {
   viewMessage,
   archiveMessage,
   restoreMessage,
-  destroy
+  deleteMessage
 }

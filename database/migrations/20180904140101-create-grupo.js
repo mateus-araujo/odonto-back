@@ -15,9 +15,7 @@ module.exports = {
       fundadorId: {
         type: DataTypes.INTEGER,
         references: { model: 'Users', key: 'id' },
-        allowNull: false,
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE"
+        allowNull: false
       },
       createdAt: {
         allowNull: false,

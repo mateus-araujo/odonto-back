@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
 
     Mensagem.belongsTo(models.User, { as: 'remetente', foreignKey: 'remetenteId' })
     Mensagem.hasOne(models.MensagemAnexo, { as: 'anexo', foreignKey: 'mensagemId' })
-    Mensagem.hasOne(models.MensagemStatus, { as: 'status', foreignKey: 'mensagemId' })
+    Mensagem.hasMany(models.MensagemStatus, { as: 'status', foreignKey: 'mensagemId' })
   }
 
   return Mensagem
