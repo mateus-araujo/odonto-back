@@ -42,7 +42,8 @@ router.get('/mensagens/arquivadas/:user_id', MensagemController.showMessagesArch
 router.put('/mensagens/visualizar/:mensagem_id/:user_id', MensagemController.viewMessage)
 router.put('/mensagens/arquivar/:mensagem_id/:user_id', MensagemController.archiveMessage)
 router.put('/mensagens/restaurar/:mensagem_id/:user_id', MensagemController.restoreMessage)
-router.put('/mensagens/apagar/:mensagem_id/:user_id', MensagemController.deleteMessage)
+router.put('/mensagens/apagar/:mensagem_id/:user_id/:local_id', MensagemController.deleteMessage)
+router.delete('/mensagens/:mensagem_id', MensagemController.destroy)
 
 router.get('/users', UserController.index)
 router.get('/users/:user_id', UserController.show)

@@ -39,7 +39,7 @@ module.exports = {
           'Administrador', 
           'RH',
           'Gerente',
-          'Padrão'
+          'Usuário padrão'
           )
       },
       createdAt: {

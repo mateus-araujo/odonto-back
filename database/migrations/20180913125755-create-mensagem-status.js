@@ -12,10 +12,13 @@ module.exports = {
       visualizada: {
         type: DataTypes.BOOLEAN
       },
-      arquivada: {
+      entrada: {
         type: DataTypes.BOOLEAN
       },
-      apagada: {
+      enviada: {
+        type: DataTypes.BOOLEAN
+      },
+      arquivada: {
         type: DataTypes.BOOLEAN
       },
       mensagemId: {

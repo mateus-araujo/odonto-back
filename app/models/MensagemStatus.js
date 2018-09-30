@@ -3,8 +3,9 @@
 module.exports = (sequelize, DataTypes) => {
   const MensagemStatus = sequelize.define('MensagemStatus', {
     visualizada: DataTypes.BOOLEAN,
+    entrada: DataTypes.BOOLEAN,
+    enviada: DataTypes.BOOLEAN,
     arquivada: DataTypes.BOOLEAN,
-    apagada: DataTypes.BOOLEAN,
     mensagemId: DataTypes.INTEGER,
     usuarioId: DataTypes.INTEGER
   }, {

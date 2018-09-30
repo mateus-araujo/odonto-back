@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       'Administrador', 
       'RH',
       'Gerente',
-      'Padrão'
+      'Usuário padrão'
       )
   }, {})
 
