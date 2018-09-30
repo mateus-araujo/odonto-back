@@ -1,3 +1,5 @@
+const Sequelize = require('sequelize')
+const Op = Sequelize.Op
 const { Grupo, User, Funcionario } = require('../models')
 
 const create = async (req, res) => {
@@ -40,6 +42,59 @@ const index = async (req, res) => {
         }
       ]
     })
+
+    return res.status(200).send({ grupos })
+  } catch (err) {
+    console.log(err)
+    return res.status(400).send({ error: err })
+  }
+}
+
+const search = async (req, res) => {
+  const { toSearch } = req.params
+  let grupos
+
+  try {
+    const gruposNome = await Grupo.findAll({
+      where: { titulo: { [Op.like]: `%${toSearch}%` } },
+      include: [
+        {
+          model: User,
+          as: 'fundador'
+        },
+        {
+          model: User,
+          as: 'integrantes',
+          include: [{
+            model: Funcionario,
+            as: 'funcionario'
+          }]
+        }
+      ]
+    })
+
+    const gruposIntegrante = await Grupo.findAll({
+      include: [
+        {
+          model: User,
+          as: 'fundador'
+        },
+        {
+          model: User,
+          as: 'integrantes',
+          where: { name: { [Op.like]: `%${toSearch}%` } },
+          include: [{
+            model: Funcionario,
+            as: 'funcionario'
+          }]
+        }
+      ]
+    })
+
+    if (gruposNome.length > 0)
+      grupos = gruposNome
+    if (gruposIntegrante.length > 0)
+      grupos = gruposIntegrante
 
     return res.status(200).send({ grupos })
   } catch (err) {
@@ -114,6 +169,7 @@ const destroy = async (req, res) => {
 module.exports = {
   create,
   index,
+  search,
   show,
   update,
   destroy,
