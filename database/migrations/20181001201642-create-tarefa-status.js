@@ -2,22 +2,36 @@
 
 module.exports = {
   up: (queryInterface, DataTypes) => {
-    return queryInterface.createTable('Grupos', {
+    return queryInterface.createTable('TarefasStatus', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER
       },
-      titulo: {
-        type: DataTypes.STRING
+      visualizada: {
+        type: DataTypes.BOOLEAN
       },
-      fundadorId: {
+      entrada: {
+        type: DataTypes.BOOLEAN
+      },
+      enviada: {
+        type: DataTypes.BOOLEAN
+      },
+      arquivada: {
+        type: DataTypes.BOOLEAN
+      },
+      tarefaId: {
+        type: DataTypes.INTEGER,
+        references: { model: 'Tarefas', key: 'id' },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE"
+      },
+      usuarioId: {
         type: DataTypes.INTEGER,
         references: { model: 'Users', key: 'id' },
-        allowNull: false,
         onUpdate: "CASCADE",
-        onDelete: "SET NULL"
+        onDelete: "CASCADE"
       },
       createdAt: {
         allowNull: false,
@@ -30,6 +44,6 @@ module.exports = {
     })
   },
   down: (queryInterface, DataTypes) => {
-    return queryInterface.dropTable('Grupos');
+    return queryInterface.dropTable('TarefasStatus');
   }
 }

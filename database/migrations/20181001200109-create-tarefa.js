@@ -2,7 +2,7 @@
 
 module.exports = {
   up: (queryInterface, DataTypes) => {
-    return queryInterface.createTable('Mensagens', {
+    return queryInterface.createTable('Tarefas', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -12,14 +12,23 @@ module.exports = {
       assunto: {
         type: DataTypes.STRING
       },
+      texto: {
+        type: DataTypes.STRING
+      },
+      prazo: {
+        type: DataTypes.DATEONLY
+      },
       remetenteId: {
         type: DataTypes.INTEGER,
         references: { model: 'Users', key: 'id' },
         onUpdate: "CASCADE",
         onDelete: "SET NULL"
       },
-      texto: {
-        type: DataTypes.STRING
+      destinatarioId: {
+        type: DataTypes.INTEGER,
+        references: { model: 'Users', key: 'id' },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
       },
       createdAt: {
         allowNull: false,
@@ -29,9 +38,9 @@ module.exports = {
         allowNull: false,
         type: DataTypes.DATE
       }
-    });
+    })
   },
   down: (queryInterface, DataTypes) => {
-    return queryInterface.dropTable('Mensagens')
+    return queryInterface.dropTable('Tarefas')
   }
 }
