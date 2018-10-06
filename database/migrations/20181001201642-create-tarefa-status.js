@@ -9,9 +9,6 @@ module.exports = {
         primaryKey: true,
         type: DataTypes.INTEGER
       },
-      visualizada: {
-        type: DataTypes.BOOLEAN
-      },
       entrada: {
         type: DataTypes.BOOLEAN
       },

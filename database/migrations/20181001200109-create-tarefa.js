@@ -10,13 +10,35 @@ module.exports = {
         type: DataTypes.INTEGER
       },
       assunto: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false
       },
       texto: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false
       },
       prazo: {
-        type: DataTypes.DATEONLY
+        type: DataTypes.DATEONLY,
+        allowNull: false
+      },
+      visualizada: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false
+      },
+      status: {
+        type: DataTypes.ENUM(
+          'waiting',
+          'doing',
+          'verifying',
+          'completed',
+          'not_completed',
+          'cancelled'
+        ),
+        allowNull: false
+      },
+      motivo: {
+        type: DataTypes.STRING,
+        allowNull: true
       },
       remetenteId: {
         type: DataTypes.INTEGER,
