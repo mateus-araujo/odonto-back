@@ -257,7 +257,7 @@ const archiveMessage = async (req, res) => {
 
     const mensagem = await Mensagem.findById(mensagem_id)
 
-    if (user_id == mensagem.remetenteId)
+    if (status.usuarioId === mensagem.remetenteId)
       status.set({ enviada: false, arquivada: true })
     else
       status.set({ entrada: false, arquivada: true })
@@ -284,7 +284,7 @@ const restoreMessage = async (req, res) => {
 
     const mensagem = await Mensagem.findById(mensagem_id)
 
-    if (user_id == mensagem.remetenteId)
+    if (status.usuarioId === mensagem.remetenteId)
       status.set({ enviada: true, arquivada: false })
     else
       status.set({ entrada: true, arquivada: false })
@@ -309,11 +309,11 @@ const deleteMessage = async (req, res) => {
       }
     })
 
-    if (local_id == 1)
+    if (local_id === '1')
       status.set({ entrada: false })
-    else if (local_id == 2)
+    else if (local_id === '2')
       status.set({ enviada: false })
-    else if (local_id == 3)
+    else if (local_id === '3')
       status.set({ arquivada: false })
 
     await status.save()

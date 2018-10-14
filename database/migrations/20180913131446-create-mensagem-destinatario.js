@@ -12,16 +12,14 @@ module.exports = {
       mensagemId: {
         type: DataTypes.INTEGER,
         references: { model: 'Mensagens', key: 'id' },
-        allowNull: false,
         onUpdate: "CASCADE",
-        onDelete: "CASCADE"
+        onDelete: "SET NULL"
       },
       destinatarioId: {
         type: DataTypes.INTEGER,
         references: { model: 'Users', key: 'id' },
-        allowNull: false,
         onUpdate: "CASCADE",
-        onDelete: "CASCADE"
+        onDelete: "SET NULL"
       },
       createdAt: {
         allowNull: false,

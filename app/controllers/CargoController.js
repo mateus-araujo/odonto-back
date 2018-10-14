@@ -1,4 +1,4 @@
-const { Cargo } = require('../models')
+const { Cargo, Funcionario } = require('../models')
 
 const create = async (req, res) => {
   const { nome, descricao, salario, permissao } = req.body
@@ -12,7 +12,7 @@ const create = async (req, res) => {
     return res.status(200).send({ cargo })
   } catch (err) {
     console.log(err)
-    return res.status(400).send({ error: err })
+    return res.status(400).send({ error: 'Erro ao criar cargo' })
   }
 }
 
@@ -53,7 +53,7 @@ const update = async (req, res) => {
     return res.send({ cargo })
   } catch (err) {
     console.log(err)
-    return res.status(400).send({ error: err })
+    return res.status(400).send({ error: 'Erro ao atualizar cargo' })
   }
 }
 
@@ -63,9 +63,26 @@ const destroy = async (req, res) => {
   try {
     cargo = await Cargo.findById(cargo_id)
 
-    await cargo.destroy()
+    const funcionarios = await Funcionario.findAll({
+      include: [
+        {
+          model: Cargo,
+          as: 'cargos',
+          where: { id: cargo_id },
+          through: { atributes: [] },
+        }
+      ]
+    })
 
-    return res.status(204).send()
+    if (funcionarios.length)
+      return res.status(400).send({ error: 'Não foi possível excluir, existem funcionários vinculados a este cargo' })
+    else {
+      await cargo.destroy()
+
+      return res.status(204).send()
+    }
+
+
   } catch (err) {
     console.log(err)
     return res.status(400).send({ error: 'Erro ao deletar cargo' })

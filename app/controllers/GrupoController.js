@@ -12,7 +12,7 @@ const create = async (req, res) => {
     const grupo = await Grupo.create({ titulo, fundadorId })
     const user = await User.findById(fundadorId)
 
-    integrantes.push(fundadorId)
+    // integrantes.push(fundadorId)
 
     if (integrantes && integrantes.length > 0)
       grupo.setIntegrantes(integrantes)

@@ -2,7 +2,7 @@ const Sequelize = require('sequelize')
 const Op = Sequelize.Op
 const validator = require('validator')
 const moment = require('moment')
-const { Funcionario, User, Cargo } = require('../models')
+const { Funcionario, User, Cargo, Tarefa, TarefaStatus } = require('../models')
 
 const create = async (req, res) => {
   try {
@@ -59,7 +59,7 @@ const search = async (req, res) => {
   let funcionarios
 
   try {
-    const funcionariosClinica = await Funcionario.findAll({ 
+    const funcionariosClinica = await Funcionario.findAll({
       where: { clinica: { [Op.like]: `%${toSearch}%` } },
       include: [
         {
@@ -183,10 +183,47 @@ const destroy = async (req, res) => {
     funcionario = await Funcionario.findById(funcionario_id)
     user = await User.findById(funcionario.usuarioId)
 
-    await funcionario.destroy()
-    await user.destroy()
+    const tarefasRemetente = await Tarefa.findAll({
+      where: { remetenteId: user.id },
+      include: [
+        {
+          model: TarefaStatus,
+          as: 'statusUser',
+          where: {
+            entrada: false,
+            enviada: true,
+            arquivada: false,
+            usuarioId: user.id
+          }
+        }
+      ]
+    })
 
-    return res.status(204).send()
+    const tarefasDestinatario = await Tarefa.findAll({
+      where: { destinatarioId: user.id },
+      include: [
+        {
+          model: TarefaStatus,
+          as: 'statusUser',
+          where: {
+            entrada: true,
+            enviada: false,
+            arquivada: false,
+            usuarioId: user.id
+          }
+        }
+      ]
+    })
+
+    if (tarefasRemetente.length || tarefasDestinatario.length)
+      return res.status(400).send({ error: 'Não foi possível excluir, existem tarefas vinculadas a este funcionário' })
+    else {
+      await funcionario.destroy()
+      await user.destroy()
+
+      return res.status(204).send()
+    }
+
   } catch (err) {
     console.log(err)
     return res.status(400).send({ error: 'Erro ao deletar funcionário' })
