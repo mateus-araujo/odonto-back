@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
         return moment.utc(this.getDataValue('data_nascimento')).format('DD/MM/YYYY')
       }
     },
+    excluido: DataTypes.BOOLEAN,
     acesso_sistema: DataTypes.BOOLEAN,
     usuarioId: DataTypes.INTEGER,
   }, {})
@@ -26,5 +27,5 @@ module.exports = (sequelize, DataTypes) => {
     Funcionario.belongsTo(models.User, { as: 'usuario', foreignKey: 'usuarioId' })
   }
 
-  return Funcionario;
+  return Funcionario
 }

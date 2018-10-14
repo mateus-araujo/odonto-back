@@ -34,6 +34,9 @@ module.exports = {
           isDate: { msg: "Esse campo precisa ser uma data válida" }
         }
       },
+      excluido: {
+        type: DataTypes.BOOLEAN
+      },
       acesso_sistema: {
         type: DataTypes.BOOLEAN,
         allowNull: false,

@@ -6,7 +6,11 @@ const { Funcionario, User, Cargo, Tarefa, TarefaStatus } = require('../models')
 
 const create = async (req, res) => {
   try {
-    let { name, email, password, cargos, data_nascimento, ...data } = req.body
+    let {
+      name, email, password,
+      clinica, cpf, data_nascimento, acesso_sistema,
+      cargos
+    } = req.body
 
     if (await User.findOne({ where: { email: email } }))
       return res.status(400).send({ error: 'Usuário já existe' })
@@ -19,7 +23,14 @@ const create = async (req, res) => {
 
     data_nascimento = moment(data_nascimento, 'DD/MM/YYYY').format('MM/DD/YYYY')
 
-    const funcionario = await Funcionario.create({ usuarioId: user.id, data_nascimento, ...data })
+    const funcionario = await Funcionario.create({
+      clinica,
+      cpf,
+      data_nascimento,
+      excluido: false,
+      acesso_sistema,
+      usuarioId: user.id
+    })
 
     if (cargos && cargos.length > 0)
       funcionario.setCargos(cargos)
@@ -34,6 +45,7 @@ const create = async (req, res) => {
 const index = async (req, res) => {
   try {
     const funcionarios = await Funcionario.findAll({
+      where: { excluido: false },
       include: [
         {
           model: Cargo,
@@ -141,7 +153,10 @@ const show = async (req, res) => {
       ]
     })
 
-    return res.send({ funcionario })
+    if (funcionario.excluido === false)
+      return res.send({ funcionario })
+    else
+      return res.status(400).send({ error: 'Funcionário excluído' })
   } catch (err) {
     console.log(err)
     return res.status(400).send({ error: err })
@@ -150,7 +165,11 @@ const show = async (req, res) => {
 
 const update = async (req, res) => {
   const { funcionario_id } = req.params
-  let { name, email, password, cargos, data_nascimento, ...data } = req.body
+  let {
+    name, email, password,
+    clinica, cpf, data_nascimento, acesso_sistema,
+    cargos
+  } = req.body
 
   try {
     const funcionario = await Funcionario.findById(funcionario_id)
@@ -158,7 +177,7 @@ const update = async (req, res) => {
 
     data_nascimento = moment(data_nascimento, 'DD/MM/YYYY').format('MM/DD/YYYY')
 
-    funcionario.set({ data_nascimento, ...data })
+    funcionario.set({ clinica, cpf, data_nascimento, acesso_sistema })
     await funcionario.save()
 
     if (name || email || password) {
@@ -176,7 +195,7 @@ const update = async (req, res) => {
   }
 }
 
-const destroy = async (req, res) => {
+const deleteFuncionario = async (req, res) => {
   const { funcionario_id } = req.params
 
   try {
@@ -184,7 +203,14 @@ const destroy = async (req, res) => {
     user = await User.findById(funcionario.usuarioId)
 
     const tarefasRemetente = await Tarefa.findAll({
-      where: { remetenteId: user.id },
+      where: {
+        remetenteId: user.id,
+        [Op.or]: [
+          { status: 'waiting' },
+          { status: 'doing' },
+          { status: 'verifying' }
+        ]
+      },
       include: [
         {
           model: TarefaStatus,
@@ -200,7 +226,14 @@ const destroy = async (req, res) => {
     })
 
     const tarefasDestinatario = await Tarefa.findAll({
-      where: { destinatarioId: user.id },
+      where: {
+        destinatarioId: user.id,
+        [Op.or]: [
+          { status: 'waiting' },
+          { status: 'doing' },
+          { status: 'verifying' }
+        ]
+      },
       include: [
         {
           model: TarefaStatus,
@@ -218,12 +251,29 @@ const destroy = async (req, res) => {
     if (tarefasRemetente.length || tarefasDestinatario.length)
       return res.status(400).send({ error: 'Não foi possível excluir, existem tarefas vinculadas a este funcionário' })
     else {
-      await funcionario.destroy()
-      await user.destroy()
+      funcionario.set({ excluido: true })
+      await funcionario.save()
 
-      return res.status(204).send()
+      return res.send({ funcionario })
     }
 
+  } catch (err) {
+    console.log(err)
+    return res.status(400).send({ error: 'Erro ao excluir funcionário' })
+  }
+}
+
+const destroy = async (req, res) => {
+  const { funcionario_id } = req.params
+
+  try {
+    funcionario = await Funcionario.findById(funcionario_id)
+    user = await User.findById(funcionario.usuarioId)
+
+    await funcionario.destroy()
+    await user.destroy()
+
+    return res.status(204).send()
   } catch (err) {
     console.log(err)
     return res.status(400).send({ error: 'Erro ao deletar funcionário' })
@@ -236,5 +286,6 @@ module.exports = {
   search,
   show,
   update,
+  deleteFuncionario,
   destroy,
 }

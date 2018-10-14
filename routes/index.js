@@ -26,6 +26,7 @@ router.get('/funcionarios', FuncionarioController.index)
 router.get('/search_funcionarios/:toSearch', FuncionarioController.search)
 router.get('/funcionarios/:funcionario_id', FuncionarioController.show)
 router.put('/funcionarios/:funcionario_id', FuncionarioController.update)
+router.put('/funcionarios/apagar/:funcionario_id', FuncionarioController.deleteFuncionario)
 router.delete('/funcionarios/:funcionario_id', FuncionarioController.destroy)
 
 router.post('/grupos', GrupoController.create)
