@@ -1,10 +1,16 @@
+require('dotenv').config()
 const fs = require('fs')
 const path = require('path')
 const Sequelize = require('sequelize')
 const config = require('../../config/database.js')
 
 const db = {}
-const sequelize = new Sequelize(config)
+let sequelize = {}
+
+if (process.env.NODE_ENV === 'dev')
+  sequelize = new Sequelize(config.development)
+else if (process.env.NODE_ENV === 'prod')
+  sequelize = new Sequelize(config.production)
 
 fs
   .readdirSync(__dirname)
