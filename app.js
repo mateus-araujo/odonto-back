@@ -68,8 +68,8 @@ createDefaultUser()
 // require('./app/controllers/index')(app)
 
 app.get('/', (req, res) => {
-  // res.sendFile(path.join(__dirname + '/public/index.html'));
-  res.send('Hello World!')
+  res.sendFile(path.join(__dirname + '/public/index.html'));
+  // res.send('Hello World!')
 })
 
 app.listen(port, () => {
