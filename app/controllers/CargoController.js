@@ -64,6 +64,7 @@ const destroy = async (req, res) => {
     cargo = await Cargo.findById(cargo_id)
 
     const funcionarios = await Funcionario.findAll({
+      where: { excluido: false },
       include: [
         {
           model: Cargo,

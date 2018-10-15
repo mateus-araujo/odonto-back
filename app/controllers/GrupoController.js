@@ -37,7 +37,8 @@ const index = async (req, res) => {
           as: 'integrantes',
           include: [{
             model: Funcionario,
-            as: 'funcionario'
+            as: 'funcionario',
+            where: { excluido: false },
           }]
         }
       ]
@@ -67,7 +68,8 @@ const search = async (req, res) => {
           as: 'integrantes',
           include: [{
             model: Funcionario,
-            as: 'funcionario'
+            as: 'funcionario',
+            where: { excluido: false },
           }]
         }
       ]
@@ -85,7 +87,8 @@ const search = async (req, res) => {
           where: { name: { [Op.like]: `%${toSearch}%` } },
           include: [{
             model: Funcionario,
-            as: 'funcionario'
+            as: 'funcionario',
+            where: { excluido: false },
           }]
         }
       ]
@@ -111,14 +114,20 @@ const show = async (req, res) => {
       include: [
         {
           model: User,
-          as: 'fundador'
+          as: 'fundador',
+          include: [{
+            model: Funcionario,
+            as: 'funcionario',
+            where: { excluido: false },
+          }]
         },
         {
           model: User,
           as: 'integrantes',
           include: [{
             model: Funcionario,
-            as: 'funcionario'
+            as: 'funcionario',
+            where: { excluido: false },
           }]
         }
       ]

@@ -5,7 +5,7 @@ const validator = require('validator')
 const transporter = require('../../services/nodemailer')
 const ip = require('ip')
 
-const { User } = require('../models')
+const { User, Funcionario } = require('../models')
 const url = "http://" + ip.address() + ":3000"
 
 require('dotenv').config()
@@ -17,17 +17,26 @@ const generateToken = (params = {}) => {
 }
 
 const create = async (req, res) => {
-  const { email } = req.body
+  const { name, email, password } = req.body
 
   try {
-    if (await User.findOne({ where: { email: email } }))
+    const users = await User.findAll({
+      where: { email: email },
+      include: [{
+        model: Funcionario,
+        as: 'funcionario',
+        where: { excluido: false }
+      }]
+    })
+
+    if (!users.length)
       return res.status(400).send({ error: 'User already exists' })
 
     if (!validator.isEmail(email)) {
       return res.status(400).send({ error: 'Invalid email' })
     }
 
-    const user = await User.create(req.body)
+    const user = await User.create({ name, email, password })
 
     user.password = undefined
 
@@ -45,13 +54,28 @@ const login = async (req, res) => {
   const { email, password } = req.body
 
   try {
-    const user = await User.findOne({ where: { email: email } })
+    const users = await User.findAll({
+      where: { email: email },
+      include: [{
+        model: Funcionario,
+        as: 'funcionario',
+        where: { excluido: false }
+      }]
+    })
 
-    if (!user)
+    if (!users.length)
       return res.status(400).send({ error: 'User not found' })
+
+    const user = users[0]
 
     if (!await bcryptjs.compare(password, user.password))
       return res.status(400).send({ error: 'Invalid password' })
+
+    if (user.funcionario.excluido === true)
+      return res.status(400).send({ error: 'Funcionário excluído' })
+
+    if (user.funcionario.acesso_sistema === false)
+      return res.status(400).send({ error: 'Funcionário sem acesso ao sistema' })
 
     user.password = undefined
 
@@ -69,10 +93,25 @@ const forgotPassword = async (req, res) => {
   const { email } = req.body
 
   try {
-    const user = await User.findOne({ where: { email: email } })
+    const users = await User.findAll({
+      where: { email: email },
+      include: [{
+        model: Funcionario,
+        as: 'funcionario',
+        where: { excluido: false }
+      }]
+    })
 
-    if (!user)
+    if (!users.length)
       return res.status(400).send({ error: 'User not found' })
+
+    const user = users[0]
+
+    if (user.funcionario.excluido === true)
+      return res.status(400).send({ error: 'Funcionário excluído' })
+
+    if (user.funcionario.acesso_sistema === false)
+      return res.status(400).send({ error: 'Funcionário sem acesso ao sistema' })
 
     const token = crypto.randomBytes(20).toString('hex')
 
@@ -85,7 +124,7 @@ const forgotPassword = async (req, res) => {
     user.passwordResetExpires = now
 
     await user.save()
-    
+
     transporter.sendMail({
       from: process.env.NM_EMAIL,
       to: email,
@@ -109,13 +148,28 @@ const forgotPassword = async (req, res) => {
 }
 
 const resetPassword = async (req, res) => {
-  const { email, token, password } = req.body
+  const { email, password, token } = req.body
 
   try {
-    const user = await User.findOne({ where: { email: email } })
+    const users = await User.findAll({
+      where: { email: email },
+      include: [{
+        model: Funcionario,
+        as: 'funcionario',
+        where: { excluido: false }
+      }]
+    })
 
-    if (!user)
+    if (!users.length)
       return res.status(400).send({ error: 'User not found' })
+
+    const user = users[0]
+
+    if (user.funcionario.excluido === true)
+      return res.status(400).send({ error: 'Funcionário excluído' })
+
+    if (user.funcionario.acesso_sistema === false)
+      return res.status(400).send({ error: 'Funcionário sem acesso ao sistema' })
 
     if (token !== user.passwordResetToken)
       return res.status(400).send({ error: 'Token invalid' })

@@ -12,8 +12,17 @@ const create = async (req, res) => {
       cargos
     } = req.body
 
-    if (await User.findOne({ where: { email: email } }))
-      return res.status(400).send({ error: 'Usuário já existe' })
+    const users = await User.findAll({
+      where: { email: email },
+      include: [{
+        model: Funcionario,
+        as: 'funcionario',
+        where: { excluido: false }
+      }]
+    })
+
+    if (users.length > 0)
+      return res.status(400).send({ error: 'Já existe um usuário com este email' })
 
     if (!validator.isEmail(email)) {
       return res.status(400).send({ error: 'Email inválido' })
@@ -72,7 +81,10 @@ const search = async (req, res) => {
 
   try {
     const funcionariosClinica = await Funcionario.findAll({
-      where: { clinica: { [Op.like]: `%${toSearch}%` } },
+      where: {
+        excluido: false,
+        clinica: { [Op.like]: `%${toSearch}%` } 
+      },
       include: [
         {
           model: Cargo,
@@ -87,6 +99,7 @@ const search = async (req, res) => {
     })
 
     const funcionariosCargo = await Funcionario.findAll({
+      where: { excluido: false },
       include: [
         {
           model: Cargo,
@@ -102,6 +115,7 @@ const search = async (req, res) => {
     })
 
     const funcionariosUser = await Funcionario.findAll({
+      where: { excluido: false },
       include: [
         {
           model: Cargo,
@@ -199,7 +213,12 @@ const deleteFuncionario = async (req, res) => {
   const { funcionario_id } = req.params
 
   try {
-    funcionario = await Funcionario.findById(funcionario_id)
+    funcionario = await Funcionario.findById(funcionario_id, {
+      include: [{
+        model: User,
+        as: 'usuario'
+      }]
+    })
     user = await User.findById(funcionario.usuarioId)
 
     const tarefasRemetente = await Tarefa.findAll({
@@ -251,7 +270,7 @@ const deleteFuncionario = async (req, res) => {
     if (tarefasRemetente.length || tarefasDestinatario.length)
       return res.status(400).send({ error: 'Não foi possível excluir, existem tarefas vinculadas a este funcionário' })
     else {
-      funcionario.set({ excluido: true })
+      funcionario.set({ excluido: true, acesso_sistema: false })
       await funcionario.save()
 
       return res.send({ funcionario })

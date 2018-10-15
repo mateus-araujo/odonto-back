@@ -19,7 +19,6 @@ module.exports = {
       email: {
         allowNull: false,
         type: DataTypes.STRING,
-        unique: true,
         validate: {
           notEmpty: { msg: "Esse campo não pode ser vazio" },
           isEmail: { msg: "Esse precisa ser um email" }
