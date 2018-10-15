@@ -82,7 +82,6 @@ app.get('*', (req, res) => {
 app.listen(port, () => {
   console.log("Local address: http://localhost:" + port + "\n"
     + "Network address: http://" + ip.address() + ":" + port)
-
 })
 
 module.exports = app
