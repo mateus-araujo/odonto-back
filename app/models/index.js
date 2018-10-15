@@ -7,9 +7,9 @@ const config = require('../../config/database.js')
 const db = {}
 let sequelize = {}
 
-if (process.env.NODE_ENV === 'dev')
+if (process.env.NODE_ENV === 'development')
   sequelize = new Sequelize(config.development)
-else if (process.env.NODE_ENV === 'prod')
+else if (process.env.NODE_ENV === 'production')
   sequelize = new Sequelize(config.production)
 
 fs
