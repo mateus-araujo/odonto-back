@@ -2,6 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const ip = require('ip')
+const path = require('path');
 
 const { Cargo, Funcionario, User } = require('./app/models')
 
@@ -67,6 +68,7 @@ createDefaultUser()
 // require('./app/controllers/index')(app)
 
 app.get('/', (req, res) => {
+  // res.sendFile(path.join(__dirname + '/public/index.html'));
   res.send('Hello World!')
 })
 
