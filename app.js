@@ -34,6 +34,10 @@ app.use(function (req, res, next) {
   }
 })
 
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, '/public/build')));
+
 createDefaultUser = async () => {
   if (!await User.findOne({ where: { email: 'admin@email.com' } })) {
     const user = await User.create({
@@ -67,9 +71,12 @@ createDefaultUser()
 
 // require('./app/controllers/index')(app)
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname + '/public/index.html'));
-  // res.send('Hello World!')
+// app.get('/', (req, res) => {
+//  res.send('Hello World!')
+// })
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname+'/public/build/index.html'));
 })
 
 app.listen(port, () => {
