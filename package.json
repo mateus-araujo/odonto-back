@@ -29,7 +29,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon app.js",
-    "heroku-postbuild": "cd ../odonto-front && npm install && npm run build && cp -r build/ ../odonto-back/public/",
+    "heroku-postbuild": "node_modules/.bin/sequelize db:migrate",
     "front": "cd ../odonto-front && npm start",
     "docker": "docker start mysql-container"
   },
