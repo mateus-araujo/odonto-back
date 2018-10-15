@@ -33,6 +33,10 @@
     "front": "cd ../odonto-front && npm start",
     "docker": "docker start mysql-container"
   },
+  "engines" : { 
+    "node" : "^10.11.0",
+    "npm": "^6.4.1"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC"
