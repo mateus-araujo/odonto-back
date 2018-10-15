@@ -2,7 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const ip = require('ip')
-const path = require('path');
+// const path = require('path');
 
 const { Cargo, Funcionario, User } = require('./app/models')
 
@@ -14,29 +14,31 @@ const port = process.env.PORT || 3000
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
+
+const whitelist = [
+  'http://localhost:3000',
+  'http://localhost:5000',
+  'http://localhost:8080',
+  'https://odonto-net.herokuapp.com/',
+  'https://odonto-front.herokuapp.com/',
+  'https://odonto-back.herokuapp.com/'
+]
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
+
+app.use(cors(corsOptions))
 app.use(routes)
 
-app.options('*', cors())
-app.use(cors())
-
-app.use(function (req, res, next) {
-  // TODO Add origin validation
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Credentials', true)
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control, Pragma')
-
-  // intercept OPTIONS method
-  if (req.method === 'OPTIONS') {
-    res.sendStatus(204)
-  } else {
-    next()
-  }
-})
-
-
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, '/public/build')));
+// app.use(express.static(path.join(__dirname, '/public/build')));
 
 createDefaultUser = async () => {
   if (!await User.findOne({ where: { email: 'admin@email.com' } })) {
@@ -69,15 +71,13 @@ createDefaultUser = async () => {
 
 createDefaultUser()
 
-// require('./app/controllers/index')(app)
-
-// app.get('/', (req, res) => {
-//  res.send('Hello World!')
-// })
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname+'/public/build/index.html'));
+app.get('/', (req, res) => {
+  res.send('Hello World!')
 })
+
+/* app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname+'/public/build/index.html'));
+}) */
 
 app.listen(port, () => {
   console.log("Local address: http://localhost:" + port + "\n"

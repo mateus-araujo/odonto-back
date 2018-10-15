@@ -5,10 +5,15 @@ const validator = require('validator')
 const transporter = require('../../services/nodemailer')
 const ip = require('ip')
 
+require('dotenv').config()
+
 const { User, Funcionario } = require('../models')
-const url = "http://" + ip.address() + ":3000"
+let url = "http://" + ip.address() + ":3000"
 
 require('dotenv').config()
+
+if (process.env.NODE_ENV === 'production')
+  url = 'https://odonto-net.herokuapp.com'
 
 const generateToken = (params = {}) => {
   return jwt.sign(params, process.env.JWT_ENCRYPTION, {
