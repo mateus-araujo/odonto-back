@@ -15,7 +15,7 @@ const port = process.env.PORT || 3000
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
-const whitelist = [
+/* const whitelist = [
   'http://localhost:3000',
   'http://localhost:5000',
   'http://localhost:8080',
@@ -32,9 +32,9 @@ const corsOptions = {
       callback(new Error('Not allowed by CORS'))
     }
   }
-}
+} */
 
-app.use(cors(corsOptions))
+app.use(cors())
 app.use(routes)
 
 // Serve static files from the React app
