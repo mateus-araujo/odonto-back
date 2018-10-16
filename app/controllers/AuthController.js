@@ -7,10 +7,8 @@ const ip = require('ip')
 
 require('dotenv').config()
 
-const { User, Funcionario } = require('../models')
+const { User, Funcionario, Cargo } = require('../models')
 let url = "http://" + ip.address() + ":3000"
-
-require('dotenv').config()
 
 if (process.env.NODE_ENV === 'production')
   url = 'https://odonto-net.herokuapp.com'
@@ -61,11 +59,17 @@ const login = async (req, res) => {
   try {
     const users = await User.findAll({
       where: { email: email },
-      include: [{
-        model: Funcionario,
-        as: 'funcionario',
-        where: { excluido: false }
-      }]
+      include: [
+        {
+          model: Funcionario,
+          as: 'funcionario',
+          where: { excluido: false },
+          include: [{
+            model: Cargo,
+            as: 'cargos'
+          }],
+        }
+      ]
     })
 
     if (!users.length)
