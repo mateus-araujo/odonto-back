@@ -9,6 +9,7 @@ const FuncionarioController = require('../app/controllers/FuncionarioController'
 const GrupoController = require('../app/controllers/GrupoController')
 const MensagemController = require('../app/controllers/MensagemController')
 const TarefaController = require('../app/controllers/TarefaController')
+const TreinamentoController = require('../app/controllers/TreinamentoController')
 
 router.post('/auth/register', AuthController.create)
 router.post('/auth/login', AuthController.login)
@@ -60,6 +61,9 @@ router.put('/tarefas/arquivar/:tarefa_id/:user_id', TarefaController.archiveTask
 router.put('/tarefas/restaurar/:tarefa_id/:user_id', TarefaController.restoreTask)
 router.put('/tarefas/apagar/:tarefa_id/:user_id/:local_id', TarefaController.deleteTask)
 router.delete('/tarefas/:tarefa_id', TarefaController.destroy)
+
+router.post('/treinamentos', TreinamentoController.create)
+router.get('/treinamentos', TreinamentoController.index)
 
 router.get('/users', UserController.index)
 router.get('/users/:user_id', UserController.show)

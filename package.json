@@ -29,8 +29,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon app.js",
-    "heroku-postbuild": "node_modules/.bin/sequelize db:migrate && npm install -g nodemon",
-    "front": "cd ../odonto-front && npm start",
+    "heroku-postbuild": "npm install -g nodemon",
+    "front": "cd ../odonto-front && npm run start_dev",
     "docker": "docker start mysql-container"
   },
   "engines" : { 
