@@ -64,6 +64,11 @@ router.delete('/tarefas/:tarefa_id', TarefaController.destroy)
 
 router.post('/treinamentos', TreinamentoController.create)
 router.get('/treinamentos', TreinamentoController.index)
+router.get('/treinamentos/:treinamento_id', TreinamentoController.show)
+router.put('/treinamentos/:treinamento_id', TreinamentoController.changeStatus)
+router.put('/treinamentos/notas/:prova_id', TreinamentoController.setNotas)
+router.get('/treinamentos/user/:user_id', TreinamentoController.showTrainingsUser)
+router.delete('/treinamentos/:treinamento_id', TreinamentoController.destroy)
 
 router.get('/users', UserController.index)
 router.get('/users/:user_id', UserController.show)
