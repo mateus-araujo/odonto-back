@@ -1,6 +1,5 @@
 const moment = require('moment')
 const {
-  Cargo,
   Funcionario,
   Treinamento,
   Prova,
@@ -24,8 +23,8 @@ const create = async (req, res) => {
     if (destinatarios && destinatarios.length > 0) {
       treinamento.setDestinatarios(destinatarios)
 
-      destinatarios.map(usuarioId => 
-        Nota.create({ 
+      destinatarios.map(usuarioId =>
+        Nota.create({
           nota: 0,
           provaId: prova.id,
           usuarioId
@@ -53,12 +52,21 @@ const index = async (req, res) => {
           as: 'prova',
           include: [{
             model: Nota,
-            as: 'notas'
+            as: 'notas',
+            include: {
+              model: User,
+              as: 'usuario'
+            }
           }]
         },
         {
           model: User,
           as: 'destinatarios',
+          include: [{
+            model: Funcionario,
+            as: 'funcionario',
+            where: { excluido: false },
+          }]
         }
       ]
     })
@@ -83,14 +91,27 @@ const show = async (req, res) => {
         {
           model: Prova,
           as: 'prova',
-          include: [{
-            model: Nota,
-            as: 'notas'
-          }]
+          include: [
+            {
+              model: Nota,
+              as: 'notas',
+              include: {
+                model: User,
+                as: 'usuario'
+              }
+            },
+          ]
         },
         {
           model: User,
           as: 'destinatarios',
+          include: [
+            {
+              model: Funcionario,
+              as: 'funcionario',
+              where: { excluido: false },
+            }
+          ]
         }
       ]
     })
@@ -119,18 +140,77 @@ const changeStatus = async (req, res) => {
   }
 }
 
+const update = async (req, res) => {
+  const { treinamento_id } = req.params
+  let { titulo, url, formulario, prazo, destinatarios } = req.body
+
+  try {
+    const treinamento = await Treinamento.findById(treinamento_id, {
+      include: [{
+        model: Prova,
+        as: 'prova'
+      }]
+    })
+
+    let prova = await Prova.findById(treinamento.prova.id)
+    await prova.destroy()
+    prova = await Prova.create({ formulario, treinamentoId: treinamento.id })
+
+    if (destinatarios && destinatarios.length > 0) {
+      treinamento.setDestinatarios(destinatarios)
+
+      destinatarios.map(usuarioId =>
+        Nota.create({
+          nota: 0,
+          provaId: prova.id,
+          usuarioId
+        })
+      )
+    }
+
+    prazo = moment(prazo, 'DD/MM/YYYY').format('MM/DD/YYYY')
+
+    treinamento.set({ titulo, url, prazo })
+    await treinamento.save()
+
+    prova.set({ formulario })
+    await prova.save()
+
+    return res.send({ treinamento })
+  } catch (err) {
+    console.log(err)
+    return res.status(400).send({ error: 'Erro ao editar treinamento' })
+  }
+}
+
 const setNotas = async (req, res) => {
-  const { prova_id } = req.params
+  const { treinamento_id } = req.params
   const { notas } = req.body
 
   try {
-    await notas.map(nota => 
+    const treinamento = await Treinamento.findById(treinamento_id, {
+      include: [{
+        model: Prova,
+        as: 'prova'
+      }]
+    })
+
+    const { id, formulario } = treinamento.prova
+
+    let prova = await Prova.findById(id)
+    await prova.destroy()
+    prova = await Prova.create({ formulario, treinamentoId: treinamento.id })
+
+    await notas.map(item =>
       Nota.create({
-        nota: nota.valor,
-        provaId: prova_id,
-        usuarioId: nota.usuarioId
+        nota: item.nota,
+        provaId: prova.id,
+        usuarioId: item.usuarioId
       })
     )
+
+    treinamento.set({ status: 'Encerrado' })
+    await treinamento.save()
 
     return res.send({ notas })
   } catch (err) {
@@ -189,6 +269,7 @@ module.exports = {
   index,
   show,
   changeStatus,
+  update,
   setNotas,
   showTrainingsUser,
   destroy
